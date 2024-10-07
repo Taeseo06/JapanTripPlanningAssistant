@@ -10,14 +10,12 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-// ES 모듈 환경에서 __dirname 대체 코드
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // CORS 허용 설정
 app.use(cors());
 
-// 정적 파일 제공 (index.html 파일을 제공)
+// static 파일 서비스 설정
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Firebase 설정 정보 제공 엔드포인트
@@ -32,7 +30,6 @@ app.get('/firebase-config', (req, res) => {
     });
 });
 
-// 서버 시작
 app.listen(port, () => {
     console.log(`Server is running at http://127.0.0.1:${port}`);
 });
