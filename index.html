@@ -1,4 +1,4 @@
-<!-- 파일이름: index.html -->
+<!-- 파일 이름: index.html -->
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -16,7 +16,7 @@
         // Firebase 설정 정보 서버로부터 가져오기
         async function getFirebaseConfig() {
             try {
-                const response = await fetch('http://localhost:3000/firebase-config');
+                const response = await fetch('/firebase-config');
                 const firebaseConfig = await response.json();
 
                 // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
