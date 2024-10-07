@@ -1,15 +1,18 @@
-// server.js (수정된 버전)
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 // 환경 변수 로드
 dotenv.config();
 
 const app = express();
 const port = 3000;
+
+// ES 모듈 환경에서 __dirname 대체 코드
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // CORS 허용 설정
 app.use(cors());
