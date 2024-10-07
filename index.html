@@ -17,11 +17,14 @@
         async function getFirebaseConfig() {
             try {
                 const response = await fetch('/firebase-config');
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
                 const firebaseConfig = await response.json();
 
                 // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
                 const app = initializeApp(firebaseConfig);
-                
+
                 // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
                 window.db = getFirestore(app);
 
