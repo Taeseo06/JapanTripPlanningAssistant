@@ -18,13 +18,13 @@
             try {
                 const response = await fetch('/firebase-config');
                 if (!response.ok) {
-                    throw new Error("Network response was not ok");
+                    throw new Error('Network response was not ok');
                 }
                 const firebaseConfig = await response.json();
 
                 // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
                 const app = initializeApp(firebaseConfig);
-
+                
                 // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
                 window.db = getFirestore(app);
 
@@ -101,7 +101,7 @@
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td><input type="checkbox" class="select-trip" data-id="${doc.id}"></td>
-                        <td class="drag-handle">⇅</td>
+                        <td class="drag-handle">⇶</td>
                         <td style="background-color: ${getDayColor(trip.day)}">${trip.day}</td>
                         <td>${trip.schedule}</td>
                         <td>${trip.startTime}</td>
@@ -130,10 +130,10 @@
             switch(tag) {
                 case "비행":
                     return "#FFF8DC"; // 연한 노랑색
-                case "입국수속":
+                case "입국수소":
                     return "#FFE4E1"; // 연한 토마토색
                 case "이동":
-                    return "#ADD8E6"; // 연한 파란색
+                    return "#ADD8E6"; // 연한 파랑색
                 case "식사":
                     return "#98FB98"; // 연한 연두색
                 case "관광":
@@ -141,7 +141,7 @@
                 case "숙소":
                     return "#DDA0DD"; // 연한 보라색
                 default:
-                    return "#FFFFFF"; // 기본 흰색
+                    return "#FFFFFF"; // 기본 희색
             }
         }
 
@@ -153,17 +153,17 @@
                 case "2일차-11/19":
                     return "#E6E6FA"; // 연한 보라색
                 case "3일차-11/20":
-                    return "#FFDEAD"; // 연한 살구색
+                    return "#FFDEAD"; // 연한 사구색
                 case "4일차-11/21":
-                    return "#AFEEEE"; // 연한 청록색
+                    return "#AFEEEE"; // 연한 총룡색
                 case "5일차-11/22":
-                    return "#F5DEB3"; // 연한 밀색
+                    return "#F5DEB3"; // 연한 미색
                 default:
-                    return "#FFFFFF"; // 기본 흰색
+                    return "#FFFFFF"; // 기본 희색
             }
         }
 
-        // 행을 드래그 앤 드롭으로 정렬 가능하게 하는 함수 정의
+        // 행을 드레그 안 드로프으로 정렬 가능하게 하는 함수 정의
         function makeRowsSortable() {
             const tableBody = document.getElementById("trip-table-body");
             new Sortable(tableBody, {
@@ -205,7 +205,7 @@
 <body>
     <h1>일본 여행 계획표</h1>
     
-    <!-- 일정 입력 폼 -->
+    <!-- 일정 입력 폴 -->
     <form onsubmit="event.preventDefault(); window.addTrip();">
         <label for="day">일차:</label>
         <select id="day">
@@ -234,7 +234,7 @@
         <label for="tag">태그:</label>
         <select id="tag">
             <option value="비행">비행</option>
-            <option value="입국수속">입국수속</option>
+            <option value="입국수소">입국수소</option>
             <option value="이동">이동</option>
             <option value="식사">식사</option>
             <option value="관광">관광</option>
