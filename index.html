@@ -1,4 +1,4 @@
-<!-- 파일이름: index.html -->
+<!-- 파일 이름: index.html -->
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -13,28 +13,23 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
-        // Firebase 설정 정보 서버로부터 가져오기
-        async function getFirebaseConfig() {
-            try {
-                const response = await fetch('http://localhost:3000/firebase-config');
-                const firebaseConfig = await response.json();
+        // Firebase 설정 정보 환경 변수에서 가져오기
+        const firebaseConfig = {
+            apiKey: process.env.API_KEY,
+            authDomain: process.env.AUTH_DOMAIN,
+            projectId: process.env.PROJECT_ID,
+            storageBucket: process.env.STORAGE_BUCKET,
+            messagingSenderId: process.env.MESSAGING_SENDER_ID,
+            appId: process.env.APP_ID
+        };
 
-                // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
-                const app = initializeApp(firebaseConfig);
-                
-                // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
-                window.db = getFirestore(app);
+        // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
 
-                // 페이지 로드 시 Firestore에서 일정 목록 표시
-                displayTrips();
-            } catch (error) {
-                console.error("Error fetching Firebase config: ", error);
-            }
-        }
-
-        // 페이지 로드 시 Firebase 설정 가져오기
+        // 페이지 로드 시 Firestore에서 일정 목록 표시
         window.onload = function() {
-            getFirebaseConfig();
+            displayTrips();
         }
 
         // Firestore에서 일정 추가 함수 정의
@@ -130,7 +125,7 @@
                 case "입국수속":
                     return "#FFE4E1"; // 연한 토마토색
                 case "이동":
-                    return "#ADD8E6"; // 연한 파랑색
+                    return "#ADD8E6"; // 연한 파란색
                 case "식사":
                     return "#98FB98"; // 연한 연두색
                 case "관광":
