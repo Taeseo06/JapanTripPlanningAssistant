@@ -1,0 +1,295 @@
+<!-- 파일이름: index.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본 여행 계획표</title>
+    
+    <!-- Firebase App (기본 Firebase 초기화 스크립트) -->
+    <script type="module">
+        // Firebase 모듈 임포트
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        // Firebase 설정 정보 서버로부터 가져오기
+        async function getFirebaseConfig() {
+            try {
+                const response = await fetch('http://localhost:3000/firebase-config');
+                const firebaseConfig = await response.json();
+
+                // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
+                const app = initializeApp(firebaseConfig);
+                
+                // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
+                window.db = getFirestore(app);
+
+                // 페이지 로드 시 Firestore에서 일정 목록 표시
+                displayTrips();
+            } catch (error) {
+                console.error("Error fetching Firebase config: ", error);
+            }
+        }
+
+        // 페이지 로드 시 Firebase 설정 가져오기
+        window.onload = function() {
+            getFirebaseConfig();
+        }
+
+        // Firestore에서 일정 추가 함수 정의
+        window.addTrip = async function() {
+            try {
+                const day = document.getElementById("day").value;
+                const schedule = document.getElementById("schedule").value;
+                const startTime = document.getElementById("startTime").value;
+                const endTime = document.getElementById("endTime").value;
+                const duration = document.getElementById("duration").value;
+                const location = document.getElementById("location").value;
+                const tag = document.getElementById("tag").value;
+                const departure = document.getElementById("departure").value;
+                const destination = document.getElementById("destination").value;
+                const transport = document.getElementById("transport").value;
+                const costKRW = parseInt(document.getElementById("costKRW").value) || 0;
+                const costJPY = parseInt(document.getElementById("costJPY").value) || 0;
+                const memo = document.getElementById("memo").value;
+                const timestamp = new Date().getTime();
+
+                const docRef = await addDoc(collection(window.db, "trips"), {
+                    day,
+                    schedule,
+                    startTime,
+                    endTime,
+                    duration,
+                    location,
+                    tag,
+                    departure,
+                    destination,
+                    transport,
+                    costKRW,
+                    costJPY,
+                    memo,
+                    timestamp
+                });
+                // 데이터 추가 성공 시 콘솔에 문서 ID 출력
+                console.log("Document written with ID: ", docRef.id);
+                // 사용자에게 알림 창으로 일정 추가 메시지 표시
+                alert("새로운 일정이 추가되었습니다!");
+                // Firestore에서 일정 목록 갱신
+                displayTrips();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+            }
+        }
+
+        // Firestore에서 일정 목록 가져와 화면에 표시하는 함수 정의
+        async function displayTrips() {
+            try {
+                if (!window.db) {
+                    console.error("Firestore is not initialized.");
+                    return;
+                }
+                const q = query(collection(window.db, "trips"), orderBy("timestamp"));
+                const querySnapshot = await getDocs(q);
+                const tripTableBody = document.getElementById("trip-table-body");
+                tripTableBody.innerHTML = ""; // 기존 목록 초기화
+                querySnapshot.forEach((doc) => {
+                    const trip = doc.data();
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="select-trip" data-id="${doc.id}"></td>
+                        <td class="drag-handle">⇅</td>
+                        <td style="background-color: ${getDayColor(trip.day)}">${trip.day}</td>
+                        <td>${trip.schedule}</td>
+                        <td>${trip.startTime}</td>
+                        <td>${trip.endTime}</td>
+                        <td>${trip.duration}</td>
+                        <td>${trip.location}</td>
+                        <td style="background-color: ${getTagColor(trip.tag)}">${trip.tag}</td>
+                        <td>${trip.departure}</td>
+                        <td>${trip.destination}</td>
+                        <td>${trip.transport}</td>
+                        <td>${trip.costKRW} 원</td>
+                        <td>${trip.costJPY} 엔</td>
+                        <td>${trip.memo}</td>
+                    `;
+                    row.dataset.id = doc.id;
+                    tripTableBody.appendChild(row);
+                });
+                makeRowsSortable();
+            } catch (error) {
+                console.error("Error getting documents: ", error);
+            }
+        }
+
+        // 태그별 색상 지정 함수
+        function getTagColor(tag) {
+            switch(tag) {
+                case "비행":
+                    return "#FFF8DC"; // 연한 노랑색
+                case "입국수속":
+                    return "#FFE4E1"; // 연한 토마토색
+                case "이동":
+                    return "#ADD8E6"; // 연한 파랑색
+                case "식사":
+                    return "#98FB98"; // 연한 연두색
+                case "관광":
+                    return "#FFB6C1"; // 연한 핑크색
+                case "숙소":
+                    return "#DDA0DD"; // 연한 보라색
+                default:
+                    return "#FFFFFF"; // 기본 흰색
+            }
+        }
+
+        // 일차별 색상 지정 함수
+        function getDayColor(day) {
+            switch(day) {
+                case "1일차-11/18":
+                    return "#F0E68C"; // 연한 황색
+                case "2일차-11/19":
+                    return "#E6E6FA"; // 연한 보라색
+                case "3일차-11/20":
+                    return "#FFDEAD"; // 연한 살구색
+                case "4일차-11/21":
+                    return "#AFEEEE"; // 연한 청록색
+                case "5일차-11/22":
+                    return "#F5DEB3"; // 연한 밀색
+                default:
+                    return "#FFFFFF"; // 기본 흰색
+            }
+        }
+
+        // 행을 드래그 앤 드롭으로 정렬 가능하게 하는 함수 정의
+        function makeRowsSortable() {
+            const tableBody = document.getElementById("trip-table-body");
+            new Sortable(tableBody, {
+                handle: ".drag-handle",
+                animation: 150,
+                onEnd: async function (evt) {
+                    const rows = Array.from(tableBody.children);
+                    const updates = [];
+                    for (let i = 0; i < rows.length; i++) {
+                        const rowId = rows[i].dataset.id;
+                        const rowRef = doc(window.db, "trips", rowId);
+                        updates.push(updateDoc(rowRef, { timestamp: i }));
+                    }
+                    await Promise.all(updates);
+                    displayTrips();
+                }
+            });
+        }
+
+        // 선택된 일정들을 삭제하는 함수 정의
+        window.deleteSelectedTrips = async function() {
+            try {
+                const selectedTrips = document.querySelectorAll(".select-trip:checked");
+                const deletePromises = [];
+                selectedTrips.forEach((checkbox) => {
+                    const tripId = checkbox.dataset.id;
+                    deletePromises.push(deleteDoc(doc(window.db, "trips", tripId)));
+                });
+                await Promise.all(deletePromises);
+                alert("선택된 일정이 삭제되었습니다!");
+                displayTrips();
+            } catch (error) {
+                console.error("Error deleting documents: ", error);
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+</head>
+<body>
+    <h1>일본 여행 계획표</h1>
+    
+    <!-- 일정 입력 폼 -->
+    <form onsubmit="event.preventDefault(); window.addTrip();">
+        <label for="day">일차:</label>
+        <select id="day">
+            <option value="1일차-11/18">1일차-11/18</option>
+            <option value="2일차-11/19">2일차-11/19</option>
+            <option value="3일차-11/20">3일차-11/20</option>
+            <option value="4일차-11/21">4일차-11/21</option>
+            <option value="5일차-11/22">5일차-11/22</option>
+        </select><br>
+
+        <label for="schedule">일정:</label>
+        <input type="text" id="schedule"><br>
+
+        <label for="startTime">시작 시간:</label>
+        <input type="text" id="startTime"><br>
+
+        <label for="endTime">종료 시간:</label>
+        <input type="text" id="endTime"><br>
+
+        <label for="duration">소요 시간:</label>
+        <input type="text" id="duration"><br>
+
+        <label for="location">위치:</label>
+        <input type="text" id="location"><br>
+
+        <label for="tag">태그:</label>
+        <select id="tag">
+            <option value="비행">비행</option>
+            <option value="입국수속">입국수속</option>
+            <option value="이동">이동</option>
+            <option value="식사">식사</option>
+            <option value="관광">관광</option>
+            <option value="숙소">숙소</option>
+        </select><br>
+
+        <label for="departure">출발지:</label>
+        <input type="text" id="departure"><br>
+
+        <label for="destination">도착지:</label>
+        <input type="text" id="destination"><br>
+
+        <label for="transport">이동 수단:</label>
+        <input type="text" id="transport"><br>
+
+        <label for="costKRW">비용 (원화):</label>
+        <input type="number" id="costKRW"><br>
+
+        <label for="costJPY">비용 (엔화):</label>
+        <input type="number" id="costJPY"><br>
+
+        <label for="memo">메모:</label>
+        <input type="text" id="memo"><br>
+
+        <button type="submit">일정 추가하기</button>
+    </form>
+    
+    <!-- Firestore에서 가져온 일정 목록을 표 형식으로 표시 -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th></th>
+                <th>일차</th>
+                <th>일정</th>
+                <th>시작 시간</th>
+                <th>종료 시간</th>
+                <th>소요 시간</th>
+                <th>위치</th>
+                <th>태그</th>
+                <th>출발지</th>
+                <th>도착지</th>
+                <th>이동 수단</th>
+                <th>비용 (원화)</th>
+                <th>비용 (엔화)</th>
+                <th>메모</th>
+            </tr>
+        </thead>
+        <tbody id="trip-table-body"></tbody>
+    </table>
+    <button onclick="deleteSelectedTrips()">선택된 일정 삭제하기</button>
+
+    <script>
+        // 전체 선택 체크박스 기능 추가
+        document.getElementById("select-all").addEventListener("change", function() {
+            const checkboxes = document.querySelectorAll(".select-trip");
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    </script>
+</body>
+</html>
