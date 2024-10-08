@@ -4,17 +4,19 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1200, initial-scale=0.5">
     <title>일본 여행 계획표</title>
     
     <style>
-        /* 작은 화면에서 표를 스크롤 가능하게 설정 */
+        /* 표가 한 화면에 들어오게 설정 */
         .table-container {
-            overflow-x: auto;
+            width: 100%;
+            overflow: auto;
+            white-space: nowrap;
         }
 
         table {
-            width: 100%;
+            width: 1200px; /* 고정된 크기로 설정하여 화면에 맞추어 조정 */
             border-collapse: collapse;
         }
 
@@ -22,6 +24,10 @@
             padding: 8px;
             text-align: left;
             border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 
@@ -33,12 +39,12 @@
 
         // Firebase 설정 정보 직접 지정
         const firebaseConfig = {
-            apiKey: "AIzaSyBtnNJ03yoW3KIORSQZjdfMdWa4Aqz74YQ",
-            authDomain: "japantripplanningassistant.firebaseapp.com",
-            projectId: "japantripplanningassistant",
-            storageBucket: "japantripplanningassistant.appspot.com",
-            messagingSenderId: "653342834055",
-            appId: "1:653342834055:web:bdea090220aae8e043a722"
+          apiKey: "AIzaSyBtnNJ03yoW3KIORSQZjdfMdWa4Aqz74YQ",
+          authDomain: "japantripplanningassistant.firebaseapp.com",
+          projectId: "japantripplanningassistant",
+          storageBucket: "japantripplanningassistant.appspot.com",
+          messagingSenderId: "653342834055",
+          appId: "1:653342834055:web:bdea090220aae8e043a722"
         };
 
         // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
