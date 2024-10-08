@@ -10,42 +10,28 @@
     <!-- Firebase App (기본 Firebase 초기화 스크립트) -->
     <script type="module">
         // Firebase 모듈 임포트
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
+        // Firebase 설정 정보 직접 지정
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtnNJ03yoW3KIORSQZjdfMdWa4Aqz74YQ",
+            authDomain: "japantripplanningassistant.firebaseapp.com",
+            projectId: "japantripplanningassistant",
+            storageBucket: "japantripplanningassistant.appspot.com",
+            messagingSenderId: "653342834055",
+            appId: "1:653342834055:web:bdea090220aae8e043a722"
+        };
 
+        // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
+        const app = initializeApp(firebaseConfig);
+        
+        // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
+        window.db = getFirestore(app);
 
-        // Firebase 설정 정보 서버로부터 가져오기
-        async function getFirebaseConfig() {
-            try {
-                const response = await fetch('/firebase-config');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const firebaseConfig = await response.json();
-
-                if (!firebaseConfig.apiKey) {
-                  throw new Error('Invalid Firebase configuration');
-                }
-
-
-                // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
-                const app = initializeApp(firebaseConfig);
-                
-                // Firestore 초기화 (Firestore 데이터베이스 사용 준비)
-                window.db = getFirestore(app);
-
-                // 페이지 로드 시 Firestore에서 일정 목록 표시
-                displayTrips();
-            } catch (error) {
-                console.error("Error fetching Firebase config: ", error);
-                alert("Firebase 설정 정보를 가져오지 못했습니다. 서버와 연결을 확인해주세요.");
-            }
-        }
-
-        // 페이지 로드 시 Firebase 설정 가져오기
+        // 페이지 로드 시 Firestore에서 일정 목록 표시
         window.onload = function() {
-            getFirebaseConfig();
+            displayTrips();
         }
 
         // Firestore에서 일정 추가 함수 정의
@@ -138,7 +124,7 @@
             switch(tag) {
                 case "비행":
                     return "#FFF8DC"; // 연한 노랑색
-                case "입국수소":
+                case "입국수속":
                     return "#FFE4E1"; // 연한 토마토색
                 case "이동":
                     return "#ADD8E6"; // 연한 파랑색
@@ -149,7 +135,7 @@
                 case "숙소":
                     return "#DDA0DD"; // 연한 보라색
                 default:
-                    return "#FFFFFF"; // 기본 희색
+                    return "#FFFFFF"; // 기본 흰색
             }
         }
 
@@ -161,17 +147,17 @@
                 case "2일차-11/19":
                     return "#E6E6FA"; // 연한 보라색
                 case "3일차-11/20":
-                    return "#FFDEAD"; // 연한 사구색
+                    return "#FFDEAD"; // 연한 살구색
                 case "4일차-11/21":
-                    return "#AFEEEE"; // 연한 총룡색
+                    return "#AFEEEE"; // 연한 청록색
                 case "5일차-11/22":
-                    return "#F5DEB3"; // 연한 미색
+                    return "#F5DEB3"; // 연한 밀색
                 default:
-                    return "#FFFFFF"; // 기본 희색
+                    return "#FFFFFF"; // 기본 흰색
             }
         }
 
-        // 행을 드레그 안 드로프으로 정렬 가능하게 하는 함수 정의
+        // 행을 드래그 앤 드롭으로 정렬 가능하게 하는 함수 정의
         function makeRowsSortable() {
             const tableBody = document.getElementById("trip-table-body");
             new Sortable(tableBody, {
@@ -213,7 +199,7 @@
 <body>
     <h1>일본 여행 계획표</h1>
     
-    <!-- 일정 입력 폴 -->
+    <!-- 일정 입력 폼 -->
     <form onsubmit="event.preventDefault(); window.addTrip();">
         <label for="day">일차:</label>
         <select id="day">
@@ -242,7 +228,7 @@
         <label for="tag">태그:</label>
         <select id="tag">
             <option value="비행">비행</option>
-            <option value="입국수소">입국수소</option>
+            <option value="입국수속">입국수속</option>
             <option value="이동">이동</option>
             <option value="식사">식사</option>
             <option value="관광">관광</option>
