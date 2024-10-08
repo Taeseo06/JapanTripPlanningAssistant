@@ -10,8 +10,10 @@
     <!-- Firebase App (기본 Firebase 초기화 스크립트) -->
     <script type="module">
         // Firebase 모듈 임포트
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+
 
         // Firebase 설정 정보 서버로부터 가져오기
         async function getFirebaseConfig() {
@@ -21,6 +23,11 @@
                     throw new Error('Network response was not ok');
                 }
                 const firebaseConfig = await response.json();
+
+                if (!firebaseConfig.apiKey) {
+                  throw new Error('Invalid Firebase configuration');
+                }
+
 
                 // Firebase 초기화 (Firebase 서비스를 사용하기 위해 초기화)
                 const app = initializeApp(firebaseConfig);
@@ -32,6 +39,7 @@
                 displayTrips();
             } catch (error) {
                 console.error("Error fetching Firebase config: ", error);
+                alert("Firebase 설정 정보를 가져오지 못했습니다. 서버와 연결을 확인해주세요.");
             }
         }
 

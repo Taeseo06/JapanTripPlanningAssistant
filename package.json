@@ -6,7 +6,7 @@
     "firebase": "^10.14.0"
   },
   "scripts": {
-    "start": "node public/server.js"
+    "start": "node server.js"
   },
   "name": "japantripplanningassistant",
   "version": "1.0.0",
