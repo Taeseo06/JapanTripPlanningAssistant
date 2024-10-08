@@ -7,6 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>일본 여행 계획표</title>
     
+    <style>
+        /* 작은 화면에서 표를 스크롤 가능하게 설정 */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+    </style>
+
     <!-- Firebase App (기본 Firebase 초기화 스크립트) -->
     <script type="module">
         // Firebase 모듈 임포트
@@ -257,28 +275,30 @@
     </form>
     
     <!-- Firestore에서 가져온 일정 목록을 표 형식으로 표시 -->
-    <table border="1">
-        <thead>
-            <tr>
-                <th><input type="checkbox" id="select-all"></th>
-                <th></th>
-                <th>일차</th>
-                <th>일정</th>
-                <th>시작 시간</th>
-                <th>종료 시간</th>
-                <th>소요 시간</th>
-                <th>위치</th>
-                <th>태그</th>
-                <th>출발지</th>
-                <th>도착지</th>
-                <th>이동 수단</th>
-                <th>비용 (원화)</th>
-                <th>비용 (엔화)</th>
-                <th>메모</th>
-            </tr>
-        </thead>
-        <tbody id="trip-table-body"></tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="select-all"></th>
+                    <th></th>
+                    <th>일차</th>
+                    <th>일정</th>
+                    <th>시작 시간</th>
+                    <th>종료 시간</th>
+                    <th>소요 시간</th>
+                    <th>위치</th>
+                    <th>태그</th>
+                    <th>출발지</th>
+                    <th>도착지</th>
+                    <th>이동 수단</th>
+                    <th>비용 (원화)</th>
+                    <th>비용 (엔화)</th>
+                    <th>메모</th>
+                </tr>
+            </thead>
+            <tbody id="trip-table-body"></tbody>
+        </table>
+    </div>
     <button onclick="deleteSelectedTrips()">선택된 일정 삭제하기</button>
 
     <script>
