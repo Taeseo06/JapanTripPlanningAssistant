@@ -266,6 +266,10 @@
             }
         }
 
+        // 팝업 열기 함수
+        window.openModal = function() {
+          document.getElementById("myModal").style.display = "block";
+        }
         // 수정 상태 토글 함수 정의
         window.toggleEditMode = function() {
             const editButton = document.getElementById("edit-button");
@@ -320,6 +324,10 @@
             }
         }
 
+          // 팝업 닫기 함수
+          window.closeModal = function() {
+            document.getElementById("myModal").style.display = "none";
+          }
         // 수정 내용 확정 함수 정의
         async function confirmEdit(selectedTrips) {
             try {
@@ -357,6 +365,7 @@
 </head>
 <body>
     <h1>일본 여행 계획표</h1>
+    <button onclick="openModal()">일정 추가</button>
     <button id="edit-button" onclick="toggleEditMode()">수정</button>
     <button onclick="deleteSelectedTrips()">선택된 일정 삭제하기</button>
     
